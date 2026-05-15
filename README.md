@@ -70,3 +70,70 @@ FROM sessions s
 JOIN users u ON s.user_id = u.id
 WHERE s.user_id = 1 AND s.expires_at > NOW();
 ```
+
+---
+
+## 3. Спецификация REST API
+
+Взаимодействие между фронтенд-приложением и бэкенд-сервисом осуществляется по протоколу HTTP с использованием формата данных JSON.
+
+### 3.1. Метод: Регистрация пользователя
+*   **HTTP Метод:** `POST`
+*   **URL:** `/api/v1/auth/register`
+*   **Заголовки (Headers):** `Content-Type: application/json`
+
+**Тело запроса (Request Body JSON):**
+```json
+{
+  "phone": "+79991112233",
+  "password": "Password123"
+}
+```
+
+**Ответы системы (Responses):**
+*   **Код `201 Created` (Успешная регистрация):**
+    ```json
+    {
+      "status": "success",
+      "message": "Пользователь успешно зарегистрирован"
+    }
+    ```
+*   **Код `400 Bad Request` (Ошибка валидации или дубликат):**
+    ```json
+    {
+      "status": "error",
+      "message": "Пользователь с таким номером уже зарегистрирован"
+    }
+    ```
+
+---
+
+### 3.2. Метод: Авторизация пользователя (Вход)
+*   **HTTP Метод:** `POST`
+*   **URL:** `/api/v1/auth/login`
+*   **Заголовки (Headers):** `Content-Type: application/json`
+
+**Тело запроса (Request Body JSON):**
+```json
+{
+  "phone": "+79991112233",
+  "password": "Password123"
+}
+```
+
+**Ответы системы (Responses):**
+*   **Код `200 OK` (Успешный вход, выдан токен):**
+    ```json
+    {
+      "status": "success",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "expires_at": "2026-05-16T19:00:00Z"
+    }
+    ```
+*   **Код `401 Unauthorized` (Неверные учетные данные):**
+    ```json
+    {
+      "status": "error",
+      "message": "Неверный логин или пароль"
+    }
+    ```
